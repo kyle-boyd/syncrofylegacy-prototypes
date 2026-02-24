@@ -1,0 +1,13 @@
+---
+description: Conventions for adding or editing prototype pages in this app
+globs: src/prototypes/**/*.jsx, src/prototypes/**/*.tsx
+---
+
+# Prototype pages
+
+- **Every prototype page must include the prototype banner** at the top of its content.
+- Use the shared component: `import PrototypeBanner from '../components/PrototypeBanner';`
+- Render it as the first element inside the prototype’s main content (e.g. first child of the page wrapper):
+  `<PrototypeBanner prototypeName="Your Prototype Name" />`
+- The banner shows "{Prototype Name} version {Version}" and a "Back to prototypes" link to `/`. Version is read from `package.json` unless you pass a `version` prop.
+- When adding a new prototype: (1) add a route and list entry in `src/App.jsx`, (2) create the prototype component under `src/prototypes/`, (3) include `PrototypeBanner` at the top.

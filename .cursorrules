@@ -1,0 +1,8 @@
+## Design system usage rules
+
+- The `design-system` folder is the single source of truth for all UI components, tokens, and theme. **Always create new components in the design system** (`design-system/`), not in `src/`.
+- When working on a prototype, only edit files inside `src/`. Never edit files inside `design-system/` unless explicitly asked to add or change a design-system component.
+- **Every new design-system component must be added to the Design System Components gallery.** Add a curated entry in `src/prototypes/DesignSystemGallery.jsx` (in the `STORIES` array) with at least: `id`, `componentName`, `group`, `label`, `description`, `Component`, `initialProps`, and `controls`. Components exported from the design system are also listed under "All components" automatically.
+- Import design-system components using the `@design-system` alias. Example: `import { Button } from '@design-system'`
+- Do not install or reference any external component libraries. Use the design-system components instead.
+
