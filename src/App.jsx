@@ -26,22 +26,25 @@ const Content = styled.main`
   width: 100%;
 `;
 
+// Use Vite's BASE_URL so links work both locally and on GitHub Pages.
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 const PROTOTYPE_IDEAS = [
   {
     text1: 'Prototype Testing',
-    url1: '/prototype-testing',
+    url1: `${BASE}/prototype-testing`,
   },
   {
     text1: 'Design System Components',
-    url1: '/design-system-components',
+    url1: `${BASE}/design-system-components`,
   },
   {
     text1: 'Partners Page',
-    url1: '/partners',
+    url1: `${BASE}/partners`,
   },
   {
     text1: 'Documents & Document Details',
-    url1: '/documents',
+    url1: `${BASE}/documents`,
   },
 ];
 
