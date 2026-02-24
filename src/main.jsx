@@ -6,10 +6,15 @@ import tokens from '@design-system';
 import App from './App';
 import './index.css';
 
+// Vite exposes the current base path as import.meta.env.BASE_URL
+// - In dev: '/'
+// - On GitHub Pages: '/syncrofylegacy-prototypes/'
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider theme={tokens}>
-      <BrowserRouter>
+      <BrowserRouter basename={basename}>
         <App />
       </BrowserRouter>
     </ThemeProvider>

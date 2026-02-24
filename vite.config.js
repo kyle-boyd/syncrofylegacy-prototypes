@@ -7,8 +7,11 @@ import pkg from './package.json' with { type: 'json' };
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export default defineConfig({
-  base: '/syncrofylegacy-prototypes/',
+// Use a different base in dev vs. build:
+// - dev: '/' so local URLs are clean
+// - build: '/syncrofylegacy-prototypes/' for GitHub Pages
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/syncrofylegacy-prototypes/' : '/',
   plugins: [
     react({
       babel: {
@@ -24,4 +27,4 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
-});
+}));
