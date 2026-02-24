@@ -306,7 +306,7 @@ const DETAIL_TABS = [
   { id: 'products', label: 'Products' },
   { id: 'tags', label: 'Tags' },
   { id: 'terms', label: 'Contract Terms' },
-  { id: '997-config', label: '997 Configuration' },
+  { id: '997-config', label: 'FA Configuration' },
 ];
 
 // Document types for 997 Specific Exclusion List
@@ -328,7 +328,7 @@ const ALL_DOCUMENT_TYPES_997_OPTIONS = [
     name: 'expect-pending',
     valueText: (
       <MenuOptionRow>
-        <span>Expect 997</span>
+        <span>Expect FA</span>
         <MenuBadge variant="pending">Pending</MenuBadge>
       </MenuOptionRow>
     ),
@@ -337,7 +337,7 @@ const ALL_DOCUMENT_TYPES_997_OPTIONS = [
     name: 'dont-expect-auto',
     valueText: (
       <MenuOptionRow>
-        <span>Don&apos;t Expect 997</span>
+        <span>Don&apos;t Expect FA</span>
         <MenuBadge variant="autoAccept">Auto Accept</MenuBadge>
       </MenuOptionRow>
     ),
@@ -346,7 +346,7 @@ const ALL_DOCUMENT_TYPES_997_OPTIONS = [
     name: 'dont-expect-unexpected',
     valueText: (
       <MenuOptionRow>
-        <span>Don&apos;t Expect 997</span>
+        <span>Don&apos;t Expect FA</span>
         <MenuBadge variant="unexpected">Unexpected</MenuBadge>
       </MenuOptionRow>
     ),
@@ -591,40 +591,40 @@ export default function PartnersPage() {
             )}
             {detailTab === '997-config' && (
               <div style={{ marginTop: 16 }}>
-                <SectionTitle>997 Configuration</SectionTitle>
+                <SectionTitle>FA Configuration</SectionTitle>
                 <SettingsDescription style={{ marginTop: 8, marginBottom: 0 }}>
-                  Control what should happen when this partner sends you documents, based on whether the partner is expected to send a 997.
+                  Control what should happen when this partner sends you documents, based on whether the partner is expected to send a Functional Acknowledgement (FA).
                 </SettingsDescription>
                 <HighlightSection>
-                  <OverlineLabel>Global 997 behavior</OverlineLabel>
+                  <OverlineLabel>Global Functional Acknowledgement behavior</OverlineLabel>
                   <SectionInlineControlRow>
                     <div>
                       <SubsectionLabel style={{ marginBottom: 4 }}>All Document Types</SubsectionLabel>
                       <SettingsDescription style={{ marginTop: 0, marginBottom: 0 }}>
-                        Set the default 997 expectation for all document types from this partner. You can override this
-                        for specific document types below.
+                        Set the default Functional Acknowledgement expectation for all document types from this partner.
+                        You can override this for specific document types below.
                       </SettingsDescription>
-                    </div>
-                    <div style={{ width: 280, minWidth: 280, marginLeft: 'auto' }}>
-                      <SelectSuggest
-                        name="all-document-types-997"
-                        label=""
-                        placeholder="Select..."
-                        options={ALL_DOCUMENT_TYPES_997_OPTIONS}
-                        value={allDocumentTypes997Mode}
-                        onChange={handle997AllDocumentTypesModeChange}
-                      />
+                      <div style={{ marginTop: 12, width: 280, maxWidth: '100%' }}>
+                        <SelectSuggest
+                          name="all-document-types-997"
+                          label=""
+                          placeholder="Select..."
+                          options={ALL_DOCUMENT_TYPES_997_OPTIONS}
+                          value={allDocumentTypes997Mode}
+                          onChange={handle997AllDocumentTypesModeChange}
+                        />
+                      </div>
                     </div>
                   </SectionInlineControlRow>
                 </HighlightSection>
                 <SubsectionLabel style={{ display: 'block', marginTop: 24, marginBottom: 8 }}>
-                  Specific 997 Exclusion List
+                  Specific Functional Acknowledgement Exclusion List
                 </SubsectionLabel>
                 <Table997Wrapper>
                   <DreamTable
                     columns={[
+                      { key: '997Mode', title: 'Functional Acknowledgement Expected' },
                       { key: 'documentType', title: 'Document Type' },
-                      { key: '997Mode', title: '997 Expected' },
                       { key: 'actions', title: '' },
                     ]}
                     data={[

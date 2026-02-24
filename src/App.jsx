@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { NewPageHeader, Card, EnhancedList } from '@design-system';
+import { NewPageHeader, Card, EnhancedList, Icon } from '@design-system';
 import styled from '@emotion/styled';
 import PrototypeTesting from './prototypes/PrototypeTesting';
 import DesignSystemGallery from './prototypes/DesignSystemGallery';
@@ -29,22 +29,47 @@ const Content = styled.main`
 // Use Vite's BASE_URL so links work both locally and on GitHub Pages.
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 
+const JIRA_STORY_URL = 'https://coenterprise.jira.com/browse/SYN-24330';
+const JIRA_STORY_KEY = 'SYN-24330';
+const LAST_EDITED = 'Last edited: 2026-02-24';
+const VERSION = 'Version: v0.0.1';
+
 const PROTOTYPE_IDEAS = [
   {
     text1: 'Prototype Testing',
+    text2: `${LAST_EDITED} • ${VERSION}`,
     url1: `${BASE}/prototype-testing`,
   },
   {
     text1: 'Design System Components',
+    text2: `${LAST_EDITED} • ${VERSION}`,
     url1: `${BASE}/design-system-components`,
   },
   {
-    text1: 'Partners Page',
+    text1: '997 Configuration',
+    text2: `${LAST_EDITED} • ${VERSION}`,
     url1: `${BASE}/partners`,
-  },
-  {
-    text1: 'Documents & Document Details',
-    url1: `${BASE}/documents`,
+    icon1: 'SETTINGS',
+    actions: [
+      <a
+        key="jira-link"
+        href={JIRA_STORY_URL}
+        target="_blank"
+        rel="noreferrer"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 4,
+          color: '#0072CE',
+          textDecoration: 'none',
+          fontWeight: 500,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <span>{JIRA_STORY_KEY}</span>
+        <Icon iconName="NEW_TAB" size={14} />
+      </a>,
+    ],
   },
 ];
 

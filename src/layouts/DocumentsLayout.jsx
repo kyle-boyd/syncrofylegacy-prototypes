@@ -49,7 +49,7 @@ export default function DocumentsLayout() {
 
   return (
     <Shell>
-      <PrototypeBanner prototypeName="Documents Prototype" />
+      <PrototypeBanner prototypeName="997 Configuration" />
       <TopNav
         logoLabel="Syncrofy"
         showEnvironmentSelector

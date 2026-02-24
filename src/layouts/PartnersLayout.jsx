@@ -49,7 +49,7 @@ export default function PartnersLayout() {
 
   return (
     <Shell>
-      <PrototypeBanner prototypeName="Partners Page" />
+      <PrototypeBanner prototypeName="997 Configuration" />
       <TopNav
         logoLabel="Syncrofy"
         showEnvironmentSelector
