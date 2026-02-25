@@ -345,7 +345,8 @@ const StatusTag = styled.span`
 function getAckStatusTagVariant(ackStatusLabel) {
   if (!ackStatusLabel) return 'gray';
   const v = ackStatusLabel.toLowerCase();
-  if (v === 'accepted' || v === 'not expected (auto-accept)' || v === 'auto accepted') return 'green';
+  if (v === 'accepted' || v === 'not expected (auto-accept)' || v === 'not expected' || v === 'auto accepted')
+    return 'green';
   if (v === 'rejected') return 'red';
   return 'gray'; // Pending, Pending Acceptance, Accepted with Errors, Not Expected (Unexpected), Unexpected
 }

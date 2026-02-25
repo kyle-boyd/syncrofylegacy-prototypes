@@ -57,7 +57,7 @@ export function ackStatusFrom997Mode(mode) {
     case PARTNER_997_MODES.DONT_EXPECT_AUTO:
       return 'Auto Accepted';
     case PARTNER_997_MODES.DONT_EXPECT_UNEXPECTED:
-      return 'Unexpected';
+      return 'Not Expected';
     case PARTNER_997_MODES.EXPECT_PENDING:
     default:
       return 'Pending';

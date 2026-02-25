@@ -647,7 +647,7 @@ export default function PartnersPage() {
                           />
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ fontSize: 12, fontWeight: 600 }}>Document will show</span>
+                          <span style={{ fontSize: 12, fontWeight: 600 }}>Initial Acknowledgment Status</span>
                           {(() => {
                             const mode = allDocumentTypes997Mode ?? 'dont-expect-auto';
                             let variant = 'pending';
@@ -676,7 +676,7 @@ export default function PartnersPage() {
                     columns={[
                       { key: 'documentType', title: 'Document Type' },
                       { key: '997Mode', title: 'FA Expected' },
-                      { key: '997Badge', title: 'Document will show' },
+                      { key: '997Badge', title: 'Initial Acknowledgment Status' },
                       { key: 'actions', title: '' },
                     ]}
                     data={[

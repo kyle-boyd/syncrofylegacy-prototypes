@@ -96,7 +96,7 @@ const DOC_997_DEMO = {
 
 function get997AckVariant(statusLabel) {
   const v = (statusLabel || '').toLowerCase();
-  if (v === 'auto accepted') return 'green';
+  if (v === 'auto accepted' || v === 'not expected') return 'green';
   if (v === 'rejected') return 'red';
   return 'gray';
 }
