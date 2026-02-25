@@ -225,6 +225,14 @@ const SubsectionLabel = styled.span`
 
 const Table997Wrapper = styled.div`
   margin-top: ${({ theme }) => theme.constants.spacing1x};
+
+  /* Fixed widths for Doc Type and FA Expected columns */
+  table th:nth-of-type(1),
+  table td:nth-of-type(1),
+  table th:nth-of-type(2),
+  table td:nth-of-type(2) {
+    width: 320px;
+  }
 `;
 
 const MenuOptionRow = styled.span`
@@ -245,7 +253,7 @@ const MenuBadge = styled.span`
   line-height: 1;
   background-color: ${({ theme, variant }) => {
     if (variant === 'autoAccept') return theme.palette.green;
-    if (variant === 'unexpected') return theme.palette.red;
+    if (variant === 'unexpected') return theme.palette.green;
     return theme.palette.d2; // pending/default
   }};
   color: ${({ theme }) => theme.palette.white};
@@ -347,9 +355,25 @@ const ALL_DOCUMENT_TYPES_997_OPTIONS = [
     valueText: (
       <MenuOptionRow>
         <span>Don&apos;t Expect FA</span>
-        <MenuBadge variant="unexpected">Unexpected</MenuBadge>
+        <MenuBadge variant="unexpected">Not Expected</MenuBadge>
       </MenuOptionRow>
     ),
+  },
+];
+
+// Text-only options for row-level 997 mode selection (badge shown in separate column)
+const ALL_DOCUMENT_TYPES_997_TEXT_OPTIONS = [
+  {
+    name: 'expect-pending',
+    valueText: 'Expect FA',
+  },
+  {
+    name: 'dont-expect-auto',
+    valueText: "Don't Expect FA (Auto Accept)",
+  },
+  {
+    name: 'dont-expect-unexpected',
+    valueText: "Don't Expect FA (Not Expected)",
   },
 ];
 
@@ -593,10 +617,9 @@ export default function PartnersPage() {
               <div style={{ marginTop: 16 }}>
                 <SectionTitle>FA Configuration</SectionTitle>
                 <SettingsDescription style={{ marginTop: 8, marginBottom: 0 }}>
-                  Control what should happen when this partner sends you documents, based on whether the partner is expected to send a Functional Acknowledgement (FA).
+                  Control what functional acknowledgement (FA) status is expected across transactions for this partner.
                 </SettingsDescription>
                 <HighlightSection>
-                  <OverlineLabel>Global Functional Acknowledgement behavior</OverlineLabel>
                   <SectionInlineControlRow>
                     <div>
                       <SubsectionLabel style={{ marginBottom: 4 }}>All Document Types</SubsectionLabel>
@@ -604,15 +627,43 @@ export default function PartnersPage() {
                         Set the default Functional Acknowledgement expectation for all document types from this partner.
                         You can override this for specific document types below.
                       </SettingsDescription>
-                      <div style={{ marginTop: 12, width: 280, maxWidth: '100%' }}>
-                        <SelectSuggest
-                          name="all-document-types-997"
-                          label=""
-                          placeholder="Select..."
-                          options={ALL_DOCUMENT_TYPES_997_OPTIONS}
-                          value={allDocumentTypes997Mode}
-                          onChange={handle997AllDocumentTypesModeChange}
-                        />
+                      <div
+                        style={{
+                          marginTop: 12,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 16,
+                          flexWrap: 'wrap',
+                        }}
+                      >
+                        <div style={{ width: 280, maxWidth: '100%' }}>
+                          <SelectSuggest
+                            name="all-document-types-997"
+                            label=""
+                            placeholder="Select..."
+                            options={ALL_DOCUMENT_TYPES_997_TEXT_OPTIONS}
+                            value={allDocumentTypes997Mode}
+                            onChange={handle997AllDocumentTypesModeChange}
+                          />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ fontSize: 12, fontWeight: 600 }}>Document will show</span>
+                          {(() => {
+                            const mode = allDocumentTypes997Mode ?? 'dont-expect-auto';
+                            let variant = 'pending';
+                            let label = 'Pending';
+
+                            if (mode === 'dont-expect-auto') {
+                              variant = 'autoAccept';
+                              label = 'Auto Accept';
+                            } else if (mode === 'dont-expect-unexpected') {
+                              variant = 'unexpected';
+                              label = 'Not Expected';
+                            }
+
+                            return <MenuBadge variant={variant}>{label}</MenuBadge>;
+                          })()}
+                        </div>
                       </div>
                     </div>
                   </SectionInlineControlRow>
@@ -623,8 +674,9 @@ export default function PartnersPage() {
                 <Table997Wrapper>
                   <DreamTable
                     columns={[
-                      { key: '997Mode', title: 'Functional Acknowledgement Expected' },
                       { key: 'documentType', title: 'Document Type' },
+                      { key: '997Mode', title: 'FA Expected' },
+                      { key: '997Badge', title: 'Document will show' },
                       { key: 'actions', title: '' },
                     ]}
                     data={[
@@ -647,27 +699,29 @@ export default function PartnersPage() {
                           );
                         }
                         if (col.key === '997Mode') return null;
+                        if (col.key === '997Badge') return null;
                         if (col.key === 'actions') return null;
                         return null;
                       }
                       if (col.key === 'documentType') {
-                        if (row.documentType === '') {
-                          return (
-                            <SelectSuggest
-                              name={`997-doc-type-${row.id}`}
-                              label=""
-                              placeholder="Select document type..."
-                              options={DOCUMENT_TYPES_997.filter(
-                                (opt) => !specific997ExclusionList.some((e) => e.documentType === opt.name)
-                              )}
-                              value=""
-                              onChange={(v) => handle997ExclusionSetType(row.id, v)}
-                              listMaxHeight="400px"
-                              listWidth="320px"
-                            />
-                          );
-                        }
-                        return row.documentType;
+                        const currentType = row.documentType ?? '';
+                        return (
+                          <SelectSuggest
+                            name={`997-doc-type-${row.id}`}
+                            label=""
+                            placeholder="Select document type..."
+                            options={DOCUMENT_TYPES_997.filter(
+                              (opt) =>
+                                !specific997ExclusionList.some(
+                                  (e) => e.documentType === opt.name && e.id !== row.id
+                                )
+                            )}
+                            value={currentType}
+                            onChange={(v) => handle997ExclusionSetType(row.id, v)}
+                            listMaxHeight="400px"
+                            listWidth="320px"
+                          />
+                        );
                       }
                       if (col.key === '997Mode') {
                         const mode = row['997Mode'] ?? 'dont-expect-auto';
@@ -676,12 +730,27 @@ export default function PartnersPage() {
                             name={`997-mode-${row.id}`}
                             label=""
                             placeholder="Select..."
-                            options={ALL_DOCUMENT_TYPES_997_OPTIONS}
+                            options={ALL_DOCUMENT_TYPES_997_TEXT_OPTIONS}
                             value={mode}
                             onChange={(v) => handle997ExclusionChange(row.id, v)}
                             placement="bottom"
                           />
                         );
+                      }
+                      if (col.key === '997Badge') {
+                        const mode = row['997Mode'] ?? 'dont-expect-auto';
+                        let variant = 'pending';
+                        let label = 'Pending';
+
+                        if (mode === 'dont-expect-auto') {
+                          variant = 'autoAccept';
+                          label = 'Auto Accept';
+                        } else if (mode === 'dont-expect-unexpected') {
+                          variant = 'unexpected';
+                          label = 'Not Expected';
+                        }
+
+                        return <MenuBadge variant={variant}>{label}</MenuBadge>;
                       }
                       if (col.key === 'actions') {
                         return (
