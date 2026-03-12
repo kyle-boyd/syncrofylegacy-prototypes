@@ -254,7 +254,7 @@ const DOCUMENT_ROWS = [
     businessPartner: 'GTMS',
     loadedOnDate: '2/24/2026, 4:57 AM',
     documentDate: '3/28/2024, 10:39 AM',
-    ackStatus: 'Accepted with Errors',
+    ackStatus: 'Accepted',
   },
   {
     id: '3',
@@ -262,7 +262,7 @@ const DOCUMENT_ROWS = [
     businessPartner: 'GTMS',
     loadedOnDate: '2/24/2026, 4:57 AM',
     documentDate: '3/31/2024, 10:02 AM',
-    ackStatus: 'Rejected',
+    ackStatus: 'Pending',
   },
   {
     id: '4',
@@ -278,7 +278,7 @@ const DOCUMENT_ROWS = [
     businessPartner: 'GTMS',
     loadedOnDate: '2/24/2026, 4:57 AM',
     documentDate: '3/20/2024, 9:00 AM',
-    ackStatus: 'Not expected (Auto-accept)',
+    ackStatus: 'Accepted',
   },
   {
     id: '6',
@@ -286,7 +286,7 @@ const DOCUMENT_ROWS = [
     businessPartner: 'Ward',
     loadedOnDate: '2/23/2026, 2:00 PM',
     documentDate: '3/22/2024, 2:00 PM',
-    ackStatus: 'Not Expected (Unexpected)',
+    ackStatus: 'Pending',
   },
   // Rows whose ack status is driven by partner 997 config (Partners > 997 Configuration)
   {
