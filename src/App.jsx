@@ -10,6 +10,7 @@ import DocumentsLayout from './layouts/DocumentsLayout';
 import DocumentsPage from './prototypes/DocumentsPage';
 import DocumentDetails from './prototypes/DocumentDetails';
 import { Partner997Provider } from './contexts/Partner997Context';
+import ExceptionEmailTemplate from './prototypes/ExceptionEmailTemplate';
 
 const Page = styled.div`
   display: flex;
@@ -31,7 +32,10 @@ const BASE = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const JIRA_STORY_URL = 'https://coenterprise.jira.com/browse/SYN-24330';
 const JIRA_STORY_KEY = 'SYN-24330';
+const EMAIL_JIRA_URL = 'https://coenterprise.jira.com/browse/SYN-99999';
+const EMAIL_JIRA_KEY = 'SYN-99999';
 const LAST_EDITED = 'Last edited: 2026-02-24';
+const EMAIL_LAST_EDITED = 'Last edited: 2026-03-25';
 const VERSION = 'Version: v0.0.1';
 
 const PROTOTYPE_IDEAS = [
@@ -71,6 +75,32 @@ const PROTOTYPE_IDEAS = [
       </a>,
     ],
   },
+  {
+    text1: 'Exception Email Template',
+    text2: `${EMAIL_LAST_EDITED} • ${VERSION}`,
+    url1: `${BASE}/exception-email-template`,
+    icon1: 'BELL',
+    actions: [
+      <a
+        key="email-jira-link"
+        href={EMAIL_JIRA_URL}
+        target="_blank"
+        rel="noreferrer"
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 4,
+          color: '#0072CE',
+          textDecoration: 'none',
+          fontWeight: 500,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <span>{EMAIL_JIRA_KEY}</span>
+        <Icon iconName="NEW_TAB" size={14} />
+      </a>,
+    ],
+  },
 ];
 
 function PrototypeList() {
@@ -96,6 +126,7 @@ export default function App() {
         <Route path="/partners" element={<PartnersLayout />}>
           <Route index element={<PartnersPage />} />
         </Route>
+        <Route path="/exception-email-template" element={<ExceptionEmailTemplate />} />
         <Route path="/documents" element={<DocumentsLayout />}>
           <Route index element={<DocumentsPage />} />
           <Route path=":id" element={<DocumentDetails />} />
