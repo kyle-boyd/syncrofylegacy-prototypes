@@ -11,6 +11,9 @@ import DocumentsPage from './prototypes/DocumentsPage';
 import DocumentDetails from './prototypes/DocumentDetails';
 import { Partner997Provider } from './contexts/Partner997Context';
 import ExceptionEmailTemplate from './prototypes/ExceptionEmailTemplate';
+import InvoiceDetail from './prototypes/InvoiceDetail';
+import ReportsLayout from './layouts/ReportsLayout';
+import ReportsPage from './prototypes/ReportsPage';
 
 const Page = styled.div`
   display: flex;
@@ -101,6 +104,18 @@ const PROTOTYPE_IDEAS = [
       </a>,
     ],
   },
+  {
+    text1: 'Invoice Detail',
+    text2: `Last edited: 2026-04-07 • ${VERSION}`,
+    url1: `${BASE}/invoice-detail`,
+    icon1: 'DOCUMENT',
+  },
+  {
+    text1: 'Reports',
+    text2: `Last edited: 2026-04-08 • ${VERSION}`,
+    url1: `${BASE}/reports`,
+    icon1: 'DOCUMENT',
+  },
 ];
 
 function PrototypeList() {
@@ -127,9 +142,15 @@ export default function App() {
           <Route index element={<PartnersPage />} />
         </Route>
         <Route path="/exception-email-template" element={<ExceptionEmailTemplate />} />
+        <Route path="/invoice-detail" element={<DocumentsLayout />}>
+          <Route index element={<InvoiceDetail />} />
+        </Route>
         <Route path="/documents" element={<DocumentsLayout />}>
           <Route index element={<DocumentsPage />} />
           <Route path=":id" element={<DocumentDetails />} />
+        </Route>
+        <Route path="/reports" element={<ReportsLayout />}>
+          <Route index element={<ReportsPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
