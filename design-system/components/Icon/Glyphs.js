@@ -34,6 +34,13 @@ import {
   People as PeopleIcon,
   Book as BookIcon,
   ChevronLeft as ChevronLeftIcon,
+  Email as EmailIcon,
+  Share as ShareIcon,
+  Adjust as AdjustIcon,
+  Download as DownloadIcon,
+  FormatListBulleted as FormatListBulletedIcon,
+  Schedule as ScheduleIcon,
+  WatchLater as WatchLaterIcon,
 } from '@mui/icons-material';
 
 export default {
@@ -68,4 +75,12 @@ export default {
   PEOPLE: { id: 'glyph-people', component: PeopleIcon },
   BOOK: { id: 'glyph-book', component: BookIcon },
   CHEVRON_LEFT: { id: 'glyph-chevron-left', component: ChevronLeftIcon },
+  CLOSE: { id: 'glyph-close', component: CloseIcon },
+  EMAIL: { id: 'glyph-email', component: EmailIcon },
+  SHARE: { id: 'glyph-share', component: ShareIcon },
+  REFRESH: { id: 'glyph-refresh', component: AdjustIcon },
+  DOWNLOAD: { id: 'glyph-download', component: DownloadIcon },
+  LIST: { id: 'glyph-list', component: FormatListBulletedIcon },
+  SCHEDULE: { id: 'glyph-schedule', component: ScheduleIcon },
+  SCHEDULE_FILLED: { id: 'glyph-schedule-filled', component: WatchLaterIcon },
 };
