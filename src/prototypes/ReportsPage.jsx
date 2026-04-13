@@ -17,6 +17,26 @@ const REPORTS = [
   { id: '10', title: 'report test', timestamp: '5/20/2024, 1:28 PM', sharedWith: '', failed: true },
 ];
 
+// Pre-populated to demonstrate scheduled report indicators
+const INITIAL_SCHEDULES = {
+  '1': { toEmails: ['team@company.com'], frequency: 'weekly', time: '8:00 AM', dayOfWeek: 'Monday', dayOfMonth: '1st' },
+  '3': { toEmails: ['reports@company.com'], frequency: 'monthly', time: '9:00 AM', dayOfWeek: 'Monday', dayOfMonth: '1st' },
+};
+
+const TIME_OPTIONS = Array.from({ length: 24 }, (_, h) => {
+  const ampm = h < 12 ? 'AM' : 'PM';
+  const hour = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${hour}:00 ${ampm}`;
+});
+
+const DAY_OF_WEEK_OPTIONS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+const DAY_OF_MONTH_OPTIONS = Array.from({ length: 31 }, (_, i) => {
+  const d = i + 1;
+  const suffix = d === 1 || d === 21 || d === 31 ? 'st' : d === 2 || d === 22 ? 'nd' : d === 3 || d === 23 ? 'rd' : 'th';
+  return `${d}${suffix}`;
+});
+
 const TABLE_COLUMNS = [
   { key: 'title', title: 'Title', sortable: true },
   { key: 'timestamp', title: 'Timestamp', sortable: true },
@@ -131,6 +151,43 @@ const FailedBadge = styled.span`
   background-color: transparent;
 `;
 
+// Tooltip
+const TooltipBubble = styled.span`
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: ${({ theme }) => theme.palette.d1};
+  color: white;
+  font-size: ${({ theme }) => theme.constants.xsFontSize};
+  padding: 4px 8px;
+  border-radius: ${({ theme }) => theme.constants.radiusSmall};
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 4px solid transparent;
+    border-top-color: ${({ theme }) => theme.palette.d1};
+  }
+`;
+
+const TooltipWrap = styled.div`
+  position: relative;
+  display: inline-flex;
+
+  &:hover ${TooltipBubble} {
+    opacity: 1;
+  }
+`;
+
 // Action icons row
 const ActionsCell = styled.div`
   display: flex;
@@ -145,11 +202,13 @@ const ActionIcon = styled.button`
   cursor: ${({ $disabled }) => $disabled ? 'not-allowed' : 'pointer'};
   display: inline-flex;
   align-items: center;
-  opacity: ${({ $disabled }) => $disabled ? 0.3 : 1};
+  opacity: ${({ $disabled, $dimmed }) => $disabled ? 0.3 : $dimmed ? 0.35 : 1};
   color: ${({ theme, $color }) => {
     if ($color === 'green') return theme.palette.green;
-    if ($color === 'red') return theme.palette.coral;
+    if ($color === 'red') return '#C62828';
     if ($color === 'orange') return '#E07800';
+    if ($color === 'teal') return theme.palette.teal;
+    if ($color === 'gray') return theme.palette.d3;
     return theme.palette.cerulean;
   }};
 
@@ -171,6 +230,110 @@ const RunReportLink = styled.button`
   cursor: pointer;
   font-weight: ${({ theme }) => theme.constants.semiBoldFontWeight};
   &:hover { text-decoration: underline; }
+`;
+
+// Scheduled indicator badge in title cell
+const ScheduledIndicator = styled.span`
+  display: inline-flex;
+  align-items: center;
+  color: ${({ theme }) => theme.palette.green};
+  margin-left: 2px;
+  flex-shrink: 0;
+`;
+
+// Schedule modal — frequency section
+const FrequencyGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.constants.spacing2x};
+`;
+
+const FrequencyOptionWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.constants.spacing1x};
+`;
+
+const FrequencyRadioRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.constants.spacing1x};
+  font-size: ${({ theme }) => theme.constants.smallFontSize};
+  font-weight: ${({ theme }) => theme.constants.semiBoldFontWeight};
+  color: ${({ theme }) => theme.palette.d1};
+  cursor: pointer;
+`;
+
+const FrequencyDetails = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.constants.spacing2x};
+  padding-left: 24px;
+`;
+
+const InlineField = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+`;
+
+// Tag/chip input for email fields
+const TagInputWrap = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  min-height: 36px;
+  padding: 4px ${({ theme }) => theme.constants.spacing1x};
+  border: 1px solid ${({ theme }) => theme.palette.silver};
+  border-radius: ${({ theme }) => theme.constants.radiusSmall};
+  background-color: ${({ theme }) => theme.palette.white};
+  cursor: text;
+
+  &:focus-within {
+    outline: 2px solid ${({ theme }) => theme.palette.cerulean};
+    outline-offset: -1px;
+  }
+`;
+
+const TagChip = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 4px 2px 8px;
+  background-color: ${({ theme }) => theme.palette.cerulean};
+  color: white;
+  border-radius: ${({ theme }) => theme.constants.radiusPill};
+  font-size: ${({ theme }) => theme.constants.xsFontSize};
+  white-space: nowrap;
+`;
+
+const TagChipRemove = styled.button`
+  background: none;
+  border: none;
+  padding: 1px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1;
+  &:hover { color: white; }
+`;
+
+const TagInputField = styled.input`
+  border: none;
+  outline: none;
+  padding: 2px 0;
+  font-size: ${({ theme }) => theme.constants.smallFontSize};
+  font-family: inherit;
+  color: ${({ theme }) => theme.palette.d1};
+  background: transparent;
+  flex: 1;
+  min-width: 140px;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.palette.d3};
+  }
 `;
 
 // ─── Modal primitives ─────────────────────────────────────────────────────────
@@ -320,10 +483,79 @@ const NativeSelect = styled.select`
   }
 `;
 
+// ─── Tooltip ──────────────────────────────────────────────────────────────────
+
+function Tooltip({ label, children }) {
+  return (
+    <TooltipWrap>
+      {children}
+      <TooltipBubble role="tooltip">{label}</TooltipBubble>
+    </TooltipWrap>
+  );
+}
+
+// ─── Tag Input ────────────────────────────────────────────────────────────────
+
+function TagInput({ id, tags, onTagsChange, placeholder }) {
+  const [inputValue, setInputValue] = useState('');
+
+  const addTag = (value) => {
+    const trimmed = value.trim().replace(/,+$/, '').trim();
+    if (trimmed && !tags.includes(trimmed)) {
+      onTagsChange([...tags, trimmed]);
+    }
+    setInputValue('');
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTag(inputValue);
+    } else if (e.key === 'Backspace' && !inputValue) {
+      onTagsChange(tags.slice(0, -1));
+    }
+  };
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    if (val.endsWith(',')) {
+      addTag(val);
+    } else {
+      setInputValue(val);
+    }
+  };
+
+  return (
+    <TagInputWrap onClick={(e) => e.currentTarget.querySelector('input')?.focus()}>
+      {tags.map((tag, i) => (
+        <TagChip key={i}>
+          {tag}
+          <TagChipRemove
+            type="button"
+            onClick={() => onTagsChange(tags.filter((_, idx) => idx !== i))}
+            aria-label={`Remove ${tag}`}
+          >
+            <Icon iconName="CLOSE" size={10} />
+          </TagChipRemove>
+        </TagChip>
+      ))}
+      <TagInputField
+        id={id}
+        type="text"
+        value={inputValue}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        onBlur={() => { if (inputValue.trim()) addTag(inputValue); }}
+        placeholder={tags.length === 0 ? placeholder : ''}
+      />
+    </TagInputWrap>
+  );
+}
+
 // ─── Email Reports Modal ──────────────────────────────────────────────────────
 
 function EmailReportsModal({ report, onClose }) {
-  const [to, setTo] = useState('');
+  const [to, setTo] = useState([]);
   const [subject, setSubject] = useState(report.title);
   const [body, setBody] = useState(
     `Hi,\nPlease find Report URL:\nhttps://app.prod.syncrofy.com/reports/v2/${report.id}abc123def456`
@@ -352,12 +584,11 @@ function EmailReportsModal({ report, onClose }) {
               <FormLabel htmlFor="email-to">To</FormLabel>
               <RequiredLabel>Required</RequiredLabel>
             </FormLabelRow>
-            <NativeInput
+            <TagInput
               id="email-to"
-              type="text"
-              placeholder='Press "Enter" to separate entries...'
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
+              tags={to}
+              onTagsChange={setTo}
+              placeholder='Type an address and press Enter or comma...'
             />
           </FormField>
           <FormField>
@@ -465,6 +696,165 @@ function RunReportFromViewModal({ onClose }) {
   );
 }
 
+// ─── Schedule Report Modal ────────────────────────────────────────────────────
+
+function ScheduleReportModal({ report, existingSchedule, onClose, onSave }) {
+  const [toEmails, setToEmails] = useState(existingSchedule?.toEmails ?? []);
+  const [frequency, setFrequency] = useState(existingSchedule?.frequency ?? 'daily');
+  const [time, setTime] = useState(existingSchedule?.time ?? '8:00 AM');
+  const [dayOfWeek, setDayOfWeek] = useState(existingSchedule?.dayOfWeek ?? 'Monday');
+  const [dayOfMonth, setDayOfMonth] = useState(existingSchedule?.dayOfMonth ?? '1st');
+
+  return (
+    <Overlay onClick={onClose}>
+      <ModalBox onClick={(e) => e.stopPropagation()}>
+        <ModalHeader>
+          <ModalTitle>Schedule Report — {report.title}</ModalTitle>
+          <ModalCloseBtn type="button" onClick={onClose} aria-label="Close">
+            <Icon iconName="CLOSE" size={16} />
+          </ModalCloseBtn>
+        </ModalHeader>
+        <ModalBody>
+          <FormField>
+            <FormLabelRow>
+              <FormLabel htmlFor="schedule-to">Email To</FormLabel>
+              <RequiredLabel>Required</RequiredLabel>
+            </FormLabelRow>
+            <TagInput
+              id="schedule-to"
+              tags={toEmails}
+              onTagsChange={setToEmails}
+              placeholder='Type an address and press Enter or comma...'
+            />
+          </FormField>
+
+          <FormField>
+            <FormLabel>Frequency</FormLabel>
+            <FrequencyGroup>
+
+              {/* Daily */}
+              <FrequencyOptionWrap>
+                <FrequencyRadioRow as="label">
+                  <input
+                    type="radio"
+                    name="schedule-frequency"
+                    value="daily"
+                    checked={frequency === 'daily'}
+                    onChange={() => setFrequency('daily')}
+                  />
+                  Daily
+                </FrequencyRadioRow>
+                {frequency === 'daily' && (
+                  <FrequencyDetails>
+                    <InlineField>
+                      <FormLabel htmlFor="schedule-daily-time">Time</FormLabel>
+                      <NativeSelect
+                        id="schedule-daily-time"
+                        value={time}
+                        onChange={(e) => setTime(e.target.value)}
+                      >
+                        {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
+                      </NativeSelect>
+                    </InlineField>
+                  </FrequencyDetails>
+                )}
+              </FrequencyOptionWrap>
+
+              {/* Weekly */}
+              <FrequencyOptionWrap>
+                <FrequencyRadioRow as="label">
+                  <input
+                    type="radio"
+                    name="schedule-frequency"
+                    value="weekly"
+                    checked={frequency === 'weekly'}
+                    onChange={() => setFrequency('weekly')}
+                  />
+                  Weekly
+                </FrequencyRadioRow>
+                {frequency === 'weekly' && (
+                  <FrequencyDetails>
+                    <InlineField>
+                      <FormLabel htmlFor="schedule-day-of-week">Day of Week</FormLabel>
+                      <NativeSelect
+                        id="schedule-day-of-week"
+                        value={dayOfWeek}
+                        onChange={(e) => setDayOfWeek(e.target.value)}
+                      >
+                        {DAY_OF_WEEK_OPTIONS.map(d => <option key={d} value={d}>{d}</option>)}
+                      </NativeSelect>
+                    </InlineField>
+                    <InlineField>
+                      <FormLabel htmlFor="schedule-weekly-time">Time</FormLabel>
+                      <NativeSelect
+                        id="schedule-weekly-time"
+                        value={time}
+                        onChange={(e) => setTime(e.target.value)}
+                      >
+                        {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
+                      </NativeSelect>
+                    </InlineField>
+                  </FrequencyDetails>
+                )}
+              </FrequencyOptionWrap>
+
+              {/* Monthly */}
+              <FrequencyOptionWrap>
+                <FrequencyRadioRow as="label">
+                  <input
+                    type="radio"
+                    name="schedule-frequency"
+                    value="monthly"
+                    checked={frequency === 'monthly'}
+                    onChange={() => setFrequency('monthly')}
+                  />
+                  Monthly
+                </FrequencyRadioRow>
+                {frequency === 'monthly' && (
+                  <FrequencyDetails>
+                    <InlineField>
+                      <FormLabel htmlFor="schedule-day-of-month">Day of Month</FormLabel>
+                      <NativeSelect
+                        id="schedule-day-of-month"
+                        value={dayOfMonth}
+                        onChange={(e) => setDayOfMonth(e.target.value)}
+                      >
+                        {DAY_OF_MONTH_OPTIONS.map(d => <option key={d} value={d}>{d}</option>)}
+                      </NativeSelect>
+                    </InlineField>
+                    <InlineField>
+                      <FormLabel htmlFor="schedule-monthly-time">Time</FormLabel>
+                      <NativeSelect
+                        id="schedule-monthly-time"
+                        value={time}
+                        onChange={(e) => setTime(e.target.value)}
+                      >
+                        {TIME_OPTIONS.map(t => <option key={t} value={t}>{t}</option>)}
+                      </NativeSelect>
+                    </InlineField>
+                  </FrequencyDetails>
+                )}
+              </FrequencyOptionWrap>
+
+            </FrequencyGroup>
+          </FormField>
+        </ModalBody>
+        <ModalFooter>
+          <Button text="Cancel" color="blue" kind="inverted" size="small" onClick={onClose} />
+          <Button
+            text="Save"
+            color="cerulean"
+            kind="default"
+            size="small"
+            disabled={toEmails.length === 0}
+            onClick={() => onSave({ toEmails, frequency, time, dayOfWeek, dayOfMonth })}
+          />
+        </ModalFooter>
+      </ModalBox>
+    </Overlay>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 const TABS = [
@@ -480,6 +870,13 @@ export default function ReportsPage() {
   const [pageSize, setPageSize] = useState(20);
   const [emailReport, setEmailReport] = useState(null);
   const [runReportOpen, setRunReportOpen] = useState(false);
+  const [scheduledReports, setScheduledReports] = useState(INITIAL_SCHEDULES);
+  const [scheduleReport, setScheduleReport] = useState(null);
+
+  const handleSaveSchedule = (config) => {
+    setScheduledReports(prev => ({ ...prev, [scheduleReport.id]: config }));
+    setScheduleReport(null);
+  };
 
   const totalCount = 94;
 
@@ -495,6 +892,11 @@ export default function ReportsPage() {
             </TitleLink>
           )}
           {row.failed && <FailedBadge>Failed</FailedBadge>}
+          {scheduledReports[row.id] && (
+            <ScheduledIndicator>
+              <Icon iconName="SCHEDULE" size={14} />
+            </ScheduledIndicator>
+          )}
         </TitleCell>
       );
     }
@@ -502,53 +904,68 @@ export default function ReportsPage() {
     if (col.key === '_actions') {
       return (
         <ActionsCell>
-          <ActionIcon
-            type="button"
-            $color="default"
-            aria-label="Email report"
-            onClick={() => setEmailReport(row)}
-            title="Email"
-          >
-            <Icon iconName="EMAIL" size={16} />
-          </ActionIcon>
-          <ActionIcon
-            type="button"
-            $color="green"
-            aria-label="Share report"
-            onClick={() => {}}
-            title="Share"
-          >
-            <Icon iconName="SHARE" size={16} />
-          </ActionIcon>
-          <ActionIcon
-            type="button"
-            $color="red"
-            aria-label="Delete report"
-            onClick={() => {}}
-            title="Delete"
-          >
-            <Icon iconName="DELETE" size={16} />
-          </ActionIcon>
-          <ActionIcon
-            type="button"
-            $color="orange"
-            aria-label="Schedule report"
-            onClick={() => {}}
-            title="Schedule"
-          >
-            <Icon iconName="REFRESH" size={16} />
-          </ActionIcon>
-          <ActionIcon
-            type="button"
-            $color="default"
-            $disabled={row.failed}
-            disabled={row.failed}
-            aria-label="Download report"
-            onClick={() => {}}
-            title="Download"
-          >
-            <Icon iconName="DOWNLOAD" size={16} />
-          </ActionIcon>
+          <Tooltip label="Email">
+            <ActionIcon
+              type="button"
+              $color="gray"
+              aria-label="Email report"
+              onClick={() => setEmailReport(row)}
+            >
+              <Icon iconName="EMAIL" size={16} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Share">
+            <ActionIcon
+              type="button"
+              $color="teal"
+              aria-label="Share report"
+              onClick={() => {}}
+            >
+              <Icon iconName="SHARE" size={16} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Delete">
+            <ActionIcon
+              type="button"
+              $color="red"
+              aria-label="Delete report"
+              onClick={() => {}}
+            >
+              <Icon iconName="DELETE" size={16} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Go to Live">
+            <ActionIcon
+              type="button"
+              $color="orange"
+              aria-label="Refresh report"
+              onClick={() => {}}
+            >
+              <Icon iconName="REFRESH" size={16} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label={scheduledReports[row.id] ? 'Edit Schedule' : 'Schedule'}>
+            <ActionIcon
+              type="button"
+              $color="green"
+              aria-label={scheduledReports[row.id] ? 'Edit schedule' : 'Schedule report'}
+              onClick={() => setScheduleReport(row)}
+            >
+              <Icon iconName={scheduledReports[row.id] ? 'SCHEDULE_FILLED' : 'SCHEDULE'} size={16} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="Download">
+            <ActionIcon
+              type="button"
+              $color="default"
+              $disabled={row.failed}
+              disabled={row.failed}
+              aria-label="Download report"
+              onClick={() => {}}
+            >
+              <Icon iconName="DOWNLOAD" size={16} />
+            </ActionIcon>
+          </Tooltip>
         </ActionsCell>
       );
     }
@@ -626,6 +1043,15 @@ export default function ReportsPage() {
 
       {runReportOpen && (
         <RunReportFromViewModal onClose={() => setRunReportOpen(false)} />
+      )}
+
+      {scheduleReport && (
+        <ScheduleReportModal
+          report={scheduleReport}
+          existingSchedule={scheduledReports[scheduleReport.id]}
+          onClose={() => setScheduleReport(null)}
+          onSave={handleSaveSchedule}
+        />
       )}
     </PageWrap>
   );
