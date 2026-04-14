@@ -11,6 +11,7 @@ import DocumentsPage from './prototypes/DocumentsPage';
 import DocumentDetails from './prototypes/DocumentDetails';
 import { Partner997Provider } from './contexts/Partner997Context';
 import ExceptionEmailTemplate from './prototypes/ExceptionEmailTemplate';
+import ScheduledReportEmailTemplate from './prototypes/ScheduledReportEmailTemplate';
 import InvoiceDetail from './prototypes/InvoiceDetail';
 import ReportsLayout from './layouts/ReportsLayout';
 import ReportsPage from './prototypes/ReportsPage';
@@ -39,6 +40,7 @@ const EMAIL_JIRA_URL = 'https://coenterprise.jira.com/browse/SYN-99999';
 const EMAIL_JIRA_KEY = 'SYN-99999';
 const LAST_EDITED = 'Last edited: 2026-02-24';
 const EMAIL_LAST_EDITED = 'Last edited: 2026-03-25';
+const REPORT_EMAIL_LAST_EDITED = 'Last edited: 2026-04-13';
 const VERSION = 'Version: v0.0.1';
 
 const PROTOTYPE_IDEAS = [
@@ -116,6 +118,12 @@ const PROTOTYPE_IDEAS = [
     url1: `${BASE}/reports`,
     icon1: 'DOCUMENT',
   },
+  {
+    text1: 'Scheduled Report Email Template',
+    text2: `${REPORT_EMAIL_LAST_EDITED} • ${VERSION}`,
+    url1: `${BASE}/scheduled-report-email-template`,
+    icon1: 'BELL',
+  },
 ];
 
 function PrototypeList() {
@@ -152,6 +160,7 @@ export default function App() {
         <Route path="/reports" element={<ReportsLayout />}>
           <Route index element={<ReportsPage />} />
         </Route>
+        <Route path="/scheduled-report-email-template" element={<ScheduledReportEmailTemplate />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Partner997Provider>
