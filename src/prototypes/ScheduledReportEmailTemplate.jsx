@@ -9,13 +9,13 @@ import PrototypeBanner from '../components/PrototypeBanner';
 
 const SCENARIOS = [
   {
-    id: 'transaction-summary',
-    label: 'Transaction Summary',
-    reportName: 'Monthly Transaction Summary',
+    id: 'document-summary',
+    label: 'Document Summary',
+    reportName: 'Monthly Document Summary',
     senderName: 'Jane Smith',
     generatedDate: 'Apr 13, 2026 at 6:00 AM',
-    fileName: 'transaction-summary-apr-2026.csv',
-    downloadUrl: 'https://app.syncrofy.com/reports/download/transaction-summary-apr-2026',
+    fileName: 'document-summary-apr-2026.csv',
+    downloadUrl: 'https://app.syncrofy.com/reports/download/document-summary-apr-2026',
   },
   {
     id: 'partner-activity',
@@ -231,6 +231,7 @@ const Divider = styled.hr`
 const CtaRow = styled.div`
   display: flex;
   justify-content: flex-start;
+  gap: 12px;
   margin-bottom: 28px;
 `;
 
@@ -244,6 +245,19 @@ const CtaButton = styled.a`
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;
+`;
+
+const CtaButtonSecondary = styled.a`
+  display: inline-block;
+  padding: 10px 24px;
+  background-color: #ffffff;
+  color: #0082bf;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: 1px solid #0082bf;
 `;
 
 const SignOff = styled.p`
@@ -298,8 +312,8 @@ function EmailPreview({ scenario }) {
           <Greeting>Hello,</Greeting>
 
           <BodyText>
-            You've received a <strong>{reportName}</strong> report sent by <strong>{senderName}</strong> by
-            Syncrofy. Please find the report attached or click below to download the data.
+            You've received a <strong>{reportName}</strong> report sent by <strong>{senderName}</strong>.
+            Please find the report attached or click below to download the data.
           </BodyText>
 
           {/* Attachment preview */}
@@ -316,6 +330,9 @@ function EmailPreview({ scenario }) {
             <CtaButton href={downloadUrl} target="_blank" rel="noreferrer">
               Download Report
             </CtaButton>
+            <CtaButtonSecondary href="https://app.syncrofy.com" target="_blank" rel="noreferrer">
+              Open in Syncrofy
+            </CtaButtonSecondary>
           </CtaRow>
 
           <Divider />
